@@ -1,23 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react"
+import '@contentstack/venus-components/build/main.css'
 
-function App() {
+import { JsonRTE } from "@contentstack/venus-components";
+const initialValue = [
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "text": ""
+          }
+        ],
+        "attrs" : {},
+        "type": "p",
+        "uid": "a2cef1e6eadf4742839d37229363337d"
+      }
+    ],
+    "type": "doc",
+    "uid": "24a7f262fbbb4c6392acba63059a29ae",
+    "attrs" : {}
+  }
+]
+function App(props) {
+  const { extension } = props;
+  const [val, setVal] = useState([])
+  const onChange = (val) => {
+    extension.field.setData(val)
+
+  }
+  useEffect(() => {
+    var value = extension.field.getData()
+    if (Object.entries(value).length === 0) {
+      value = initialValue
+      extension.field.setData(value)
+      setVal(value)
+    } else {
+      setVal(value)
+    }
+  }, [])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <JsonRTE value={val} toolbarMode={extension.config.toolbarMode} onChange={onChange} requestProps={extension.config} hideToolBarOnBlur={false} />
     </div>
   );
 }
